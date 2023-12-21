@@ -4,8 +4,8 @@
 
 export EDITOR="nvim"
 export BROWSER="xdg-open"
-export USERNAME="ayushmantripathy2004"
-export GITHUB_USERNAME="AyushmanTripathy"
+export USERNAME="suprada"
+export GITHUB_USERNAME="Suprada-2002"
 export CHROMEOS_HOME="/mnt/chromeos/MyFiles"
 export MUSICDB="$CHROMEOS_HOME/music"
 
