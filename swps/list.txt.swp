@@ -1,0 +1,16 @@
+.bashrc
+.bash_aliases
+.bash_profile
+quotes.txt
+.config/npmrc
+.config/X11
+.config/moc
+.config/git
+.config/nvim
+.config/kitty
+.config/postroom.json
+.config/dunst
+.config/picom
+.local/src/dwmblocks/blocks.def.h
+.local/src/slock/config.def.h
+.local/share/emojis.txt

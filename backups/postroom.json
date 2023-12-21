@@ -1,0 +1,7 @@
+{
+  "name": "AT",
+  "rooms": {
+    "sus": "https://postroom-sus.herokuapp.com/",
+    "local": "http://localhost:5000"
+  }
+}

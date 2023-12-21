@@ -1,0 +1,103 @@
+#!/bin/sh
+
+LOCATION="$HOME/dots"
+
+push_to_git(){
+  # pushing to git  
+  echo 'PUSHING'
+  update-remote
+  git add .
+  git commit -m "backup $(date)"
+  git push -u origin master
+
+  cd $HOME/.local/bin
+  update-remote
+  git add .
+  git commit -m "backup $(date)"
+  git push -u origin master
+}
+
+error(){
+  echo "[ERROR] $1"
+  exit
+}
+
+backup(){
+  cd $LOCATION
+  ls backups || mkdir backups
+  # copying files
+  cat $LOCATION/list.txt | while read line 
+  do
+    echo "backing up $line"
+    rm -r "backups/$(basename $line)"
+    cp -r "$HOME/$line" "backups/$(basename $line)" || error "cannot copy $line"
+  done
+
+  mkdir private
+  cat $LOCATION/private.txt | while read line
+  do
+    echo "backing up [private] $line"
+    cp -r "$HOME/$line" "private/$(basename $line)" || error "cannot copy $line"
+  done
+
+  tar -czvf secrets.tar private
+  rm -r private
+  gpg --encrypt --sign --armour -r ayushmantripathy2004@gmail.com secrets.tar
+  rm secrets.tar
+  mv secrets.tar.asc backups/
+  push_to_git
+}
+
+retrive(){
+  echo "are you sure you wanna do that?"
+  read null
+
+  cd $LOCATION
+  ls backups || error 'backups dir not found'
+
+  # copying files
+  printf "\nretriving files...\n"
+  cat $LOCATION/list.txt | while read line 
+  do
+    echo "retriving $line"
+    rm -rf "$HOME/$line"
+    cp -r "backups/$(basename $line)" "$HOME/$line" || echo "cannot copy $line"
+  done
+}
+
+retrive_private() {
+  echo "are you sure you wanna do that?"
+  read null
+
+  cd $LOCATION
+  ls backups || error 'backups dir not found'
+
+  cat backups/secrets.tar.asc >> /dev/null || error 'secrets.tar.asc not found'
+  gpg -d backups/secrets.tar.asc >> private.tar || error 'failed to decrypt'
+  echo "Decryption Complete"
+
+  tar xvf private.tar
+  rm private.tar
+
+  # copying files
+  mkdir -p $HOME/private
+  printf "\nretriving files...\n"
+  cat $LOCATION/private.txt | while read line 
+  do
+    echo "retriving $line"
+    rm -rf "$HOME/$line"
+    cp -r "private/$(basename $line)" "$HOME/$line" || echo "cannot copy $line"
+  done
+
+  rm -r private
+}
+
+while getopts "r b a: p" opt
+do
+  case "${opt}" in
+    r) retrive;;
+    b) backup;;
+    p) retrive_private;;
+    a) echo ${OPTARG} >> $LOCATION/list.txt;;
+    esac
+done

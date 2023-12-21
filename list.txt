@@ -1,0 +1,11 @@
+.bashrc
+.bash_aliases
+.bash_profile
+quotes.txt
+.config/npmrc
+.config/moc
+.config/git
+.config/nvim
+.config/kitty
+.config/postroom.json
+.local/share/emojis.txt
