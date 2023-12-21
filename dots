@@ -32,19 +32,6 @@ backup(){
     rm -r "backups/$(basename $line)"
     cp -r "$HOME/$line" "backups/$(basename $line)" || error "cannot copy $line"
   done
-
-  mkdir private
-  cat $LOCATION/private.txt | while read line
-  do
-    echo "backing up [private] $line"
-    cp -r "$HOME/$line" "private/$(basename $line)" || error "cannot copy $line"
-  done
-
-  tar -czvf secrets.tar private
-  rm -r private
-  gpg --encrypt --sign --armour -r ayushmantripathy2004@gmail.com secrets.tar
-  rm secrets.tar
-  mv secrets.tar.asc backups/
   push_to_git
 }
 
